@@ -1,16 +1,12 @@
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 
 class AppState {
-  @observable timer = 0;
-
-  constructor() {
-    setInterval(() => {
-      this.timer += 1;
-    }, 1000);
-  }
-
-  resetTimer() {
-    this.timer = 0;
+  @observable numbers = [];
+  
+  @computed get getRandomNumber() {
+    let numOne = Number(this.numbers[0]) || 0;
+    let numTwo = Number(this.numbers[1]) || 0;
+    return Math.floor( Math.random() * ( numTwo - numOne )) + numOne;
   }
 }
 

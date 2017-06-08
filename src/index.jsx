@@ -8,7 +8,7 @@ const appState = new AppState();
 
 render(
   <AppContainer>
-    <App appState={appState} />
+    <App store={appState} />
   </AppContainer>,
   document.getElementById('root')
 );
@@ -19,7 +19,7 @@ if (module.hot) {
 
     render(
       <AppContainer>
-        <NextApp appState={appState} />
+        <NextApp store={appState} />
       </AppContainer>,
       document.getElementById('root')
     );
