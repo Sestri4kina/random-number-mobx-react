@@ -3,70 +3,76 @@ import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
 @observer
-class App extends React.Component {
+export default class App extends React.Component {
   
   render() {
-    
+    //const {numbers, getRandomNumber} = this.props.store;
     return (
-      <div className='container'>
+      <div>
         <h1>Get a random number from a range</h1>
+        <p>{this.props.store.addNumber(45)}</p>
+        <p>{JSON.stringify(this.props.store.numbers)}</p> 
+                  
         <NumberInput />
-        <NumberList />
+      
       </div>
     );
   }
 }
 
-@observer 
-class NumberList extends React.Component {
-  render() {
-    let store = this.props.store;
-    return (
-      <ul>
-          {store.numbers.map((number, id) => {
-            <NumberView text={text} number={number} key={id} />
-          })}
-      </ul>
-    );
-  }
-}
+/* add to App copmonent after <NumberInput />
+<NumberList />
+<div>
+  {numbers.length === 2 && 
+    <h3>`The random number is ${getRandomNumber()}`</h3>}
+</div>
+*/
 
-@observer 
-class NumberView extends React.Component {
-  render() {
-    const number = this.props.number;
-    const text = this.props.text;
-    return (
-      <li>{ text } { number }</li>
-    );
-  }
-}
+/*
+const NumberView = ({number, text}) => <li> {text} { number } </li> 
+*/
 
-@observer 
+
+@observer
 class NumberInput extends React.Component {
-  addNumber(numb) {
-    this.props.store.numbers.push(numb);
-  }
-
+  
   handleSubmit(e) {
     e.preventDefault();
-    let value = e.target.value;
-    this.addNumber(value);
-    e.target.value = '';
-  }
-
-  handleChange() {
-
+    const value = this.refs.input.value;   
+    console.log(this.props);
+    if (!value) {
+      return;
+    }
+    console.log(this.props);
+    this.props.store.addNumber(value);
   }
 
   render() {
     return (
       <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text" onChange={this.handleChange.bind(this)}/>
-        <input type="submit" value="Add a new number" />
+        <input type="text" ref="input"/>
+        <input type="submit" value="Add a number" />
       </form>
     );
   }
 }
 
-export default App;
+/*
+@observer 
+class NumberList extends React.Component {
+  render() {
+    let numbers  = this.props.store.numbers;
+    return (
+      <div>
+        {numbers.length === 2 && 
+          <ul>
+              {numbers.slice().map((number, id) => {
+                <NumberView number={number} text={`Number ${id} is `} key={id} />
+              })}  
+          </ul>}
+      </div>
+    );
+  }
+}
+*/
+
