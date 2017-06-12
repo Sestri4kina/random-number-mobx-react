@@ -4,34 +4,39 @@ import DevTools from 'mobx-react-devtools';
 
 @observer
 export default class App extends React.Component {
+  getRandomNumber(numbOne, numbTwo) {
+    return Math.floor( Math.random() * ( +numbTwo - +numbOne )) + +numbOne;
+  }
   
+  handleReset() {
+    this.props.store.reset();
+  }
+
   render() {
-    //const {numbers, getRandomNumber} = this.props.store;
+    const {numbers, getRandomNumber} = this.props.store;
     return (
       <div>
+        <DevTools />
         <h1>Get a random number from a range</h1>
-        <p>{this.props.store.addNumber(45)}</p>
-        <p>{JSON.stringify(this.props.store.numbers)}</p> 
-                  
-        <NumberInput />
-      
+        <p>Enter one by one two numbers.</p>
+        <p>Make sure that the first number is smaller than the second one.</p>
+        <p>You've entered {JSON.stringify(this.props.store.numbers)}.</p>                      
+        <NumberInput store={this.props.store} />
+
+        {
+          (numbers[0] && numbers[1]) &&
+          <NumberList store={this.props.store}/>
+        }
+
+        {
+          (numbers[0] && numbers[1]) &&
+            <h3>The random number from the range [ {numbers[0]}, {numbers[1]} ] is {this.getRandomNumber(numbers[0], numbers[1])}.</h3>
+        }
+        <button onClick={this.handleReset.bind(this)}>Reset</button>
       </div>
     );
   }
 }
-
-/* add to App copmonent after <NumberInput />
-<NumberList />
-<div>
-  {numbers.length === 2 && 
-    <h3>`The random number is ${getRandomNumber()}`</h3>}
-</div>
-*/
-
-/*
-const NumberView = ({number, text}) => <li> {text} { number } </li> 
-*/
-
 
 @observer
 class NumberInput extends React.Component {
@@ -39,12 +44,13 @@ class NumberInput extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const value = this.refs.input.value;   
-    console.log(this.props);
+    
     if (!value) {
       return;
     }
-    console.log(this.props);
-    this.props.store.addNumber(value);
+    
+    this.props.store.addNumber(+value);
+    this.refs.input.value = '';
   }
 
   render() {
@@ -57,22 +63,21 @@ class NumberInput extends React.Component {
   }
 }
 
-/*
 @observer 
 class NumberList extends React.Component {
   render() {
-    let numbers  = this.props.store.numbers;
     return (
       <div>
-        {numbers.length === 2 && 
-          <ul>
-              {numbers.slice().map((number, id) => {
-                <NumberView number={number} text={`Number ${id} is `} key={id} />
-              })}  
-          </ul>}
+        <ul>
+          {this.props.store.numbers.map((number, id) => 
+            <li key={id}>
+             {id === 0 ? 'The lower bound ' : 'The upper bound '} is {number}.   
+            </li>
+            )}  
+        </ul>
       </div>
     );
   }
 }
-*/
+
 
