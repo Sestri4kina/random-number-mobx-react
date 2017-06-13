@@ -4,6 +4,10 @@ import DevTools from 'mobx-react-devtools';
 
 @observer
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   getRandomNumber(numbOne, numbTwo) {
     return Math.floor( Math.random() * ( +numbTwo - +numbOne )) + +numbOne;
   }
@@ -13,24 +17,22 @@ export default class App extends React.Component {
   }
 
   render() {
-    const {numbers, getRandomNumber} = this.props.store;
+    const {numbers} = this.props.store;
     return (
       <div>
         <DevTools />
         <h1>Get a random number from a range</h1>
         <p>Enter one by one two numbers.</p>
         <p>Make sure that the first number is smaller than the second one.</p>
-        <p>You've entered {JSON.stringify(this.props.store.numbers)}.</p>                      
-        <NumberInput store={this.props.store} />
+        {/*<p>You've entered {JSON.stringify(this.props.store.numbers)}.</p>                      */}
+        <NumberInput numbers={this.props.store.numbers} onAddNumber={this.props.store.addNumber}/>
 
         {
-          (numbers[0] && numbers[1]) &&
-          <NumberList store={this.props.store}/>
+          <NumberList numbers={this.props.store.numbers}/>
         }
 
         {
-          (numbers[0] && numbers[1]) &&
-            <h3>The random number from the range [ {numbers[0]}, {numbers[1]} ] is {this.getRandomNumber(numbers[0], numbers[1])}.</h3>
+            <h3>The random number from the range is {this.props.store.randomNumber}.</h3>
         }
         <button onClick={this.handleReset.bind(this)}>Reset</button>
       </div>
@@ -40,7 +42,11 @@ export default class App extends React.Component {
 
 @observer
 class NumberInput extends React.Component {
-  
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     const value = this.refs.input.value;   
@@ -49,13 +55,13 @@ class NumberInput extends React.Component {
       return;
     }
     
-    this.props.store.addNumber(+value);
+    this.props.onAddNumber(+value);
     this.refs.input.value = '';
   }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
+      <form onSubmit={this.handleSubmit}>
         <input type="text" ref="input"/>
         <input type="submit" value="Add a number" />
       </form>
@@ -65,11 +71,15 @@ class NumberInput extends React.Component {
 
 @observer 
 class NumberList extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <div>
         <ul>
-          {this.props.store.numbers.map((number, id) => 
+          {this.props.numbers.map((number, id) => 
             <li key={id}>
              {id === 0 ? 'The lower bound ' : 'The upper bound '} is {number}.   
             </li>

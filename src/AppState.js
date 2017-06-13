@@ -9,6 +9,11 @@ class AppState {
      this.numbers.push(numberValue);
   }
 
+  @computed get randomNumber() {
+    if (this.numbers.length !== 2) return;
+    return Math.floor( Math.random() * ( +this.numbers[1] - +this.numbers[0] )) + +this.numbers[0];
+  }
+
   @action reset() {
     this.numbers = [];
   }
